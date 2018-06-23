@@ -4,7 +4,7 @@
 
 ## Intro - The Problem
 
-On GVim shows white edges when maximized or snapped to the edges on Windows
+GVim shows white edges when maximized or snapped to the edges on Windows
 (and as far as I know on other platforms as well).
 
 As far as I know there is no solution for this problem unless you use NeoVim
