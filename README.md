@@ -81,6 +81,6 @@ plugin the second time and may experience memory leaks and glitches
 
 I would like to thank the creator of
 [gvim full screen plugin](https://github.com/leonid-shevtsov/gvimfullscreen_win32).
-I'm using it for many years and the source code of this plugin helped me
+I'm using it for many years and the source code of his plugin helped me
 started this one.
 
