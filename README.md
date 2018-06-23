@@ -1,6 +1,6 @@
 # Fix GVim Border (Windows only)
 
-[youtu.be/noLYGZnpWx8](https://www.youtube.com/watch?v=ek1j272iAmc)
+[youtu.be/noLYGZnpWx8](https://youtu.be/noLYGZnpWx8)
 
 ## Intro - The Problem
 
@@ -12,11 +12,11 @@ or [full screen plugin](https://github.com/leonid-shevtsov/gvimfullscreen_win32)
 
 Problem:
 
-[![Fix GVim Border - problem](https://j.gifs.com/mQmERO.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
+[![Fix GVim Border - problem](https://j.gifs.com/mQmERO.gif)](https://youtu.be/noLYGZnpWx8)
 
 Solution:
 
-[![Fix GVim Border - solution](https://j.gifs.com/JqMPD2.gif)](https://www.youtube.com/watch?v=ek1j272iAmc)
+[![Fix GVim Border - solution](https://j.gifs.com/JqMPD2.gif)](https://youtu.be/noLYGZnpWx8)
 
 
 ## Configuration
