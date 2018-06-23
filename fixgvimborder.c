@@ -11,9 +11,9 @@ static BOOL _autoDetectBaseColor = TRUE;
 static BOOL _hasEdgesProblem = FALSE;
 static COLORREF _baseColor = RGB(255, 0, 0);
 
-LRESULT CALLBACK SubclassWndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK FindWindowProc(HWND hwnd, LPARAM lParam);
 BOOL CALLBACK FindChildWindowProc(HWND hwnd, LPARAM lParam);
+LRESULT CALLBACK SubclassWndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lParam);
 
 // replaces GVim WinProc event loop
 LPTSTR _declspec(dllexport) InitFixBorderHook(
@@ -23,7 +23,7 @@ LPTSTR _declspec(dllexport) InitFixBorderHook(
 {
     DWORD dwThreadID;
 
-    // this module variable is instance THIS loaded .dll
+    // this module variable is an instance of THIS loaded .dll
     // we will use it to clear ourselves from memory
     // on GVim window close or on error
     _module = module;
@@ -100,7 +100,7 @@ LRESULT CALLBACK SubclassWndProc(
     WPARAM wParam,
     LPARAM lParam)
 {
-    // if closing free itself from memory
+    // if closing then free itself from memory
     if (wm == WM_CLOSE || wm == WM_QUIT || (wm == WM_DESTROY && hwnd == _mainWindow))
     {
         if (_module != NULL && FreeLibrary(_module))
@@ -118,7 +118,7 @@ LRESULT CALLBACK SubclassWndProc(
         RECT rc;
         GetClientRect(hwnd, &rc);
 
-        // fill whore client are to obtain background color
+        // fill whole client are to obtain background color
         HBRUSH hb = CreateSolidBrush(_baseColor);
         FillRect(hdc, &ps.rcPaint, hb);
 
