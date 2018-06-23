@@ -39,7 +39,7 @@ Both dll libraries need to be placed in GVim installation directory.
 The default installation directory (for 64 bit system) is:
 ``C:\Program Files\vim\vim80``
 
-Then we need to place this lines in our vimrc:
+Then we need to put those lines in our vimrc:
 
 ```vim
     " GVim settings only
@@ -66,12 +66,12 @@ command to see if there are any detected errors:
 ```vim
     " GVim settings only
     if has("gui_running")
-        " use echo instead of call to se returned message
+        " use echo instead of call to see returned message
         autocmd GUIEnter * echo libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
     endif
 ```
 
-**The plugin can be loaded only ONCE!**
+**The plugin can be loaded only ONCE after GVim startup!**
 
 For example if you reload your vimrc after GVim startup you will load the
 plugin the second time and may experience memory leaks and glitches
