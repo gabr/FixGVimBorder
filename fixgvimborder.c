@@ -135,7 +135,7 @@ LRESULT CALLBACK SubclassWndProc(
         RECT mainRc;
         GetClientRect(hwnd, &mainRc);
         int mainWidth = mainRc.right - mainRc.left;
-        int mainHeight = mainRc.bottom - mainRc.top;
+        //int mainHeight = mainRc.bottom - mainRc.top;
 
         RECT textRc;
         GetClientRect(_vimTextArea, &textRc);
@@ -143,7 +143,10 @@ LRESULT CALLBACK SubclassWndProc(
         int textHeight = textRc.bottom - textRc.top;
 
         int xdelta = (mainWidth - textWidth)/2;
-        int ydelta = (mainHeight - textHeight)/2;
+
+        int ydelta = 0;
+        // centring vertically disable for now
+        //int ydelta = (mainHeight - textHeight)/2;
 
         _hasEdgesProblem = xdelta > 0 || ydelta > 0;
 
