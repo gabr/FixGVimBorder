@@ -32,51 +32,49 @@ GVim removes plugin from memory just after using it, so we need two plugins:
    itself from memory after Gvim closes
 
 **Repository provides you with precompiled dll libraries
-for 32b and 64b system.  But you need to change the name
-of the files when copying into GVim installation directory.**
+for 32b and 64b system (located in lib/x86 and lib/x64).**
 
-Both dll libraries need to be placed in GVim installation directory.
+## Installation
+
+**Pathogen**  
+```
+mkdir -p %HOMEDIR%\vimfiles
+mkdir -p %HOMEDIR%\vimfiles\bundle
+cd %HOMEDIR%\vimfiles\bundle
+git clone https://github.com/azzoam/FixGVimBorder.git
+```
+
+Additionally, both dll libraries need to be placed in GVim installation directory.
 The default installation directory (for 64 bit system) is:
 ``C:\Program Files\vim\vim80``
 
-Then we need to put those lines in our vimrc:
+You can run either `install32.bat` or `install64.bat` as admin,
+or copy them yourself.
+
+Once installed, all we need is to put these lines in our vimrc:
 
 ```vim
-    " GVim settings only
-    if has("gui_running")
-
-        "FixGVimBorder
-        if $VIM_FULLSCREEN_DLL_FIX
-            " dll already loaded, do nothing
-        else
-            " load the dll fix
-
-            " auto detects background color and uses it on the border
-            " this works most of the time
-            "autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
-
-            " permanent solution - setup border color by hand using hex format
-            " this is recomended solution
-            autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", "#002B36")
-            let $VIM_FULLSCREEN_DLL_FIX = 1
-        endif
-
-
-    endif
+execute pathogen#infect()
+call fixGVimBorder#auto()
 ```
 
-**The plugin can be loaded only in GVim section.**
+## Customization
 
-**If you put it inside console vim then it may crasch the program.**
+The vimrc above with autodetect your background color and fill the screen 
+border with it.  If you experience issues, or wish to specificy the color
+yourself, simply pass a hex color to fixGVimBorder like below.
 
-**The plugin can be loaded only ONCE after GVim startup!**
+```vim
+call fixGVimBorder#auto("#FF0000")
+```
+or
+```vim
+call fixGVimBorder#withColor("#FF0000")
+```
 
-**NOTE** that the recommeded use sets an environment variable
-`$VIM_FULLSCREEN_DLL_FIX` to 1 when the dll loads, which prevents
-the dll from being reloaded if you reload your vimrc in the same session.
-
-Reloading the plugin a second time may cause memory leaks and glitches
-(not tested).
+**NOTE** that calling the patch in this way prevents the dll from being reloaded
+if you reload your vimrc in the same session, and also ensures the patch is
+only loaded inside GVim and not console vim.  In console Vim the code does nothing.
 
 If plugin doesn't work try loading it using ``echo`` instead of ``call``
 command to see if there are any detected errors:
