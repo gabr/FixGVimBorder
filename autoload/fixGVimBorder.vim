@@ -2,17 +2,20 @@
 
 
 function! fixGVimBorder#auto(...)
+    if has("gui_running")
 
-    if a:0 == 0
-        let border_color = synIDattr(synIDtrans(hlID("Normal")), "bg", "gui")
-    elseif a:0 == 1
-        let border_color = a:1
-    else
-        " TODO(alex): handle this error
-        return 0
+        if a:0 == 0
+            let border_color = synIDattr(synIDtrans(hlID("Normal")), "bg", "gui")
+        elseif a:0 == 1
+            let border_color = a:1
+        else
+            " TODO(alex): handle this error
+            return 0
+        endif
+
+        call fixGVimBorder#withColor(border_color)
+
     endif
-
-    call fixGVimBorder#withColor(border_color)
 
 endfunction
 

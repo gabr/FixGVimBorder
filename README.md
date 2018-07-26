@@ -38,9 +38,8 @@ for 32b and 64b system (located in lib/x86 and lib/x64).**
 
 **Pathogen**  
 ```
-mkdir -p %HOMEDIR%\vimfiles
-mkdir -p %HOMEDIR%\vimfiles\bundle
-cd %HOMEDIR%\vimfiles\bundle
+IF NOT EXIST %HOMEPATH%\vimfiles\bundle mkdir %HOMEPATH%\vimfiles\bundle
+cd %HOMEPATH%\vimfiles\bundle
 git clone https://github.com/azzoam/FixGVimBorder.git
 ```
 
@@ -60,7 +59,7 @@ call fixGVimBorder#auto()
 
 ## Customization
 
-The vimrc above with autodetect your background color and fill the screen 
+The vimrc above will autodetect your background color and fill the screen 
 border with it.  If you experience issues, or wish to specificy the color
 yourself, simply pass a hex color to fixGVimBorder like below.
 
