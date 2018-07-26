@@ -45,13 +45,22 @@ Then we need to put those lines in our vimrc:
     " GVim settings only
     if has("gui_running")
 
-        " auto detects background color and uses it on the border
-        " this works most of the time
-        "autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
+        "FixGVimBorder
+        if $VIM_FULLSCREEN_DLL_FIX
+            " dll already loaded, do nothing
+        else
+            " load the dll fix
 
-        " permanent solution - setup border color by hand using hex format
-        " this is recomended solution
-        autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", "#002B36")
+            " auto detects background color and uses it on the border
+            " this works most of the time
+            "autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
+
+            " permanent solution - setup border color by hand using hex format
+            " this is recomended solution
+            autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", "#002B36")
+            let $VIM_FULLSCREEN_DLL_FIX = 1
+        endif
+
 
     endif
 ```
@@ -59,6 +68,15 @@ Then we need to put those lines in our vimrc:
 **The plugin can be loaded only in GVim section.**
 
 **If you put it inside console vim then it may crasch the program.**
+
+**The plugin can be loaded only ONCE after GVim startup!**
+
+**NOTE** that the recommeded use sets an environment variable
+`$VIM_FULLSCREEN_DLL_FIX` to 1 when the dll loads, which prevents
+the dll from being reloaded if you reload your vimrc in the same session.
+
+Reloading the plugin a second time may cause memory leaks and glitches
+(not tested).
 
 If plugin doesn't work try loading it using ``echo`` instead of ``call``
 command to see if there are any detected errors:
@@ -71,11 +89,6 @@ command to see if there are any detected errors:
     endif
 ```
 
-**The plugin can be loaded only ONCE after GVim startup!**
-
-For example if you reload your vimrc after GVim startup you will load the
-plugin the second time and may experience memory leaks and glitches
-(not tested).
 
 # Thanks
 
