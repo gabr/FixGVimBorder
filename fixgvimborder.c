@@ -10,6 +10,7 @@ static CHAR classNameBuffer[BUFFER_SIZE];
 static BOOL _autoDetectBaseColor = TRUE;
 static BOOL _hasEdgesProblem = FALSE;
 static COLORREF _baseColor = RGB(255, 0, 0);
+static BOOL _enableCentering = TRUE;
 
 BOOL CALLBACK FindWindowProc(HWND hwnd, LPARAM lParam);
 BOOL CALLBACK FindChildWindowProc(HWND hwnd, LPARAM lParam);
@@ -19,7 +20,8 @@ LRESULT CALLBACK SubclassWndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lPara
 LPTSTR _declspec(dllexport) InitFixBorderHook(
     HINSTANCE module,
     BOOL autoDetectBaseColor,
-    COLORREF baseColor)
+    COLORREF baseColor,
+    BOOL enableCentering)
 {
     DWORD dwThreadID;
 
@@ -29,6 +31,7 @@ LPTSTR _declspec(dllexport) InitFixBorderHook(
     _module = module;
     _autoDetectBaseColor = autoDetectBaseColor;
     _baseColor = baseColor;
+    _enableCentering = enableCentering;
 
     // get handler to main window
     dwThreadID = GetCurrentThreadId();
@@ -130,12 +133,12 @@ LRESULT CALLBACK SubclassWndProc(
     LRESULT result = CallWindowProc(_originalWndProc, hwnd, wm, wParam, lParam);
 
     // center Vim TextArea in the whole window
-    if (wm == WM_SIZE)
+    if (_enableCentering && wm == WM_SIZE)
     {
         RECT mainRc;
         GetClientRect(hwnd, &mainRc);
         int mainWidth = mainRc.right - mainRc.left;
-        //int mainHeight = mainRc.bottom - mainRc.top;
+        int mainHeight = mainRc.bottom - mainRc.top;
 
         RECT textRc;
         GetClientRect(_vimTextArea, &textRc);
@@ -143,10 +146,7 @@ LRESULT CALLBACK SubclassWndProc(
         int textHeight = textRc.bottom - textRc.top;
 
         int xdelta = (mainWidth - textWidth)/2;
-
-        int ydelta = 0;
-        // centring vertically disable for now
-        //int ydelta = (mainHeight - textHeight)/2;
+        int ydelta = (mainHeight - textHeight)/2;
 
         _hasEdgesProblem = xdelta > 0 || ydelta > 0;
 

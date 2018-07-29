@@ -89,6 +89,21 @@ command to see if there are any detected errors:
     endif
 ```
 
+# Known problems
+
+There are situations not handled by this plugin:
+* there are Themes with different colors for the text area and area after End Of File - plugin uses single color only so this is not handled
+* plugin does not stretch the color of visual selection
+* the `cursorline` is not handled
+* the `colorcolumn` is not handled
+
+## Scrollbar and other GUI elements issues
+
+Because the plugin tries to center the vim text area it may interfere with GUI.
+The well know problem is scroll bar.
+
+If you have any problems with GUI elements when using the plugin load it using
+`LoadFixGVimBorderWithoutAutocentering` function instead of `LoadFixGVimBorder`.
 
 # Thanks
 
