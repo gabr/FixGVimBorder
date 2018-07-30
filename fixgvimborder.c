@@ -133,7 +133,7 @@ LRESULT CALLBACK SubclassWndProc(
     LRESULT result = CallWindowProc(_originalWndProc, hwnd, wm, wParam, lParam);
 
     // center Vim TextArea in the whole window
-    if (_enableCentering && wm == WM_SIZE)
+    if (wm == WM_SIZE)
     {
         RECT mainRc;
         GetClientRect(hwnd, &mainRc);
@@ -150,9 +150,9 @@ LRESULT CALLBACK SubclassWndProc(
 
         _hasEdgesProblem = xdelta > 0 || ydelta > 0;
 
-        if (_hasEdgesProblem)
+        // center vimTextArea in main window
+        if (_enableCentering && _hasEdgesProblem)
         {
-            // center vimTextArea in main window
             MoveWindow(
               _vimTextArea,
               textRc.left + xdelta,
@@ -160,14 +160,14 @@ LRESULT CALLBACK SubclassWndProc(
               textWidth,
               textHeight,
               TRUE);
+        }
 
-            // try to autodetect base color using pixel from right bottom corne
-            if (_autoDetectBaseColor)
-            {
-                HDC hdc = GetDC(_vimTextArea);
-                _baseColor = GetPixel(hdc, textRc.right - 10, textRc.bottom - 10);
-                ReleaseDC(_vimTextArea, hdc);
-            }
+        // try to autodetect base color using pixel from right bottom corne
+        if (_autoDetectBaseColor && _hasEdgesProblem)
+        {
+            HDC hdc = GetDC(_vimTextArea);
+            _baseColor = GetPixel(hdc, textRc.right - 10, textRc.bottom - 10);
+            ReleaseDC(_vimTextArea, hdc);
         }
     }
 
