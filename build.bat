@@ -1,5 +1,8 @@
-call initBuild64b.bat
-REM call initBuild32b.bat
+if "%1"=="32" (
+    call initBuild32b.bat
+) else (
+    call initBuild64b.bat
+)
 
 REM cleanup before compilation
 call clean.bat >nul 2>&1
@@ -32,13 +35,19 @@ REM if no errors then copy files to the vim directory
 if NOT ERRORLEVEL 1 (
     echo.
 
-    del "C:\Program Files\vim\vim80\fixgvimborder.dll"
-    copy bin\fixgvimborder.dll  .
-    copy bin\fixgvimborder.dll  "C:\Program Files\vim\vim80"
+    copy /Y bin\fixgvimborder.dll  "C:\Program Files\vim\vim80"
+    copy /Y bin\loadfixgvimborder.dll  "C:\Program Files\vim\vim80"
 
-    del "C:\Program Files\vim\vim80\loadfixgvimborder.dll"
-    copy bin\loadfixgvimborder.dll  .
-    copy bin\loadfixgvimborder.dll  "C:\Program Files\vim\vim80"
+    copy /Y bin\fixgvimborder.dll  .
+    copy /Y bin\loadfixgvimborder.dll  .
+
+    if "%1"=="32" (
+        copy /Y bin\fixgvimborder.dll fixgvimborder32.dll
+        copy /Y bin\loadfixgvimborder.dll loadfixgvimborder32.dll
+    ) else (
+        copy /Y bin\fixgvimborder.dll fixgvimborder64.dll
+        copy /Y bin\loadfixgvimborder.dll loadfixgvimborder64.dll
+    )
 
     REM cleanup after successfull compilation
     call clean.bat >nul 2>&1
