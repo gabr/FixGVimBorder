@@ -63,7 +63,8 @@ call fixGVimBorder#auto()
 ```
 `fixGVimBorder#auto()` will do all the work to autodetect your background
 color, load the dll patches, and fill in GVim's borders with the background
-color.  
+color.  It also autodetects whether to center the screen or not to 
+ensure compatibility with scrollbars and menus.
 
 Please **NOTE** that the only requirement for the placement of `call fixGVimBorder#auto()`
 is **after** `execute pathogen#infect()` and setting of the colorscheme.
@@ -92,6 +93,30 @@ any detected errors:
 call fixGVimBorder#printErrors()
 ```
 
+## Centering
+
+The patch can either center the VimText area or not.  Centering looks
+better on GVim with no menu or scrollbars present, but interferes with
+several elements -- see "Scrollbar and other GUI elements issues"
+
+The user-facing functions can either autodetect which should occur,
+or allow you to specify them yourself.
+
+**Autodetect centering:**
+* `fixGVimBorder#auto()`
+* `fixGVimBorder#withColor()`
+* `fixGVimBorder#printErrors()`
+
+**Force centering:**
+* `fixGVimBorder#center()`
+* `fixGVimBorder#withColorCenter()`
+* `fixGVimBorder#printErrorsCenter()`
+
+**Force no centering:**
+* `fixGVimBorder#noCenter()`
+* `fixGVimBorder#withColorNoCenter()`
+* `fixGVimBorder#printErrorsNoCenter()`
+
 # Known problems
 
 There are situations not handled by this plugin:
@@ -106,7 +131,7 @@ Because the plugin tries to center the vim text area it may interfere with GUI.
 The well know problem is scroll bar.
 
 If you have any problems with GUI elements when using the plugin load it using
-`LoadFixGVimBorderWithoutAutocentering` function instead of `LoadFixGVimBorder`.
+the force no centering functions insead.
 
 # Thanks
 

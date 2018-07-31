@@ -2,7 +2,6 @@
 #include <string.h>
 #include "common.h"
 
-<<<<<<< HEAD:src/loadfixgvimborder.c
 // NOTE(alex):  Autodetection of color is now handled via
 // vimscript exclusively.  All c code for this has been 
 // deleted to reflect this change.  Autodetection of color
