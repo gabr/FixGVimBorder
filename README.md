@@ -21,7 +21,6 @@ Solution:
 
 ## Configuration
 
-**I will start by saying that the solution is pretty hacky.**
 
 The plugin consists of two ``*.dll`` files.
 GVim removes plugin from memory just after using it, so we need two plugins:
@@ -32,62 +31,91 @@ GVim removes plugin from memory just after using it, so we need two plugins:
    itself from memory after Gvim closes
 
 **Repository provides you with precompiled dll libraries
-for 32b and 64b system.  But you need to change the name
-of the files when copying into GVim installation directory.**
+for 32bit and 64bit systems (located in lib/x86 and lib/x64).**
 
-Both dll libraries need to be placed in GVim installation directory.
-The default installation directory (for 64 bit system) is:
-``C:\Program Files\vim\vim80``
+These dll's live in the lib directory of the package itself.  No need to 
+copy them elsewhere!
 
-Then we need to put those lines in our vimrc:
+## Installation
 
-```vim
-    " GVim settings only
-    if has("gui_running")
-
-        "FixGVimBorder
-        if $VIM_FULLSCREEN_DLL_FIX
-            " dll already loaded, do nothing
-        else
-            " load the dll fix
-
-            " auto detects background color and uses it on the border
-            " this works most of the time
-            "autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
-
-            " permanent solution - setup border color by hand using hex format
-            " this is recomended solution
-            autocmd GUIEnter * call libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", "#002B36")
-            let $VIM_FULLSCREEN_DLL_FIX = 1
-        endif
-
-
-    endif
+**Pathogen**  
+```
+IF NOT EXIST %HOMEPATH%\vimfiles\bundle mkdir %HOMEPATH%\vimfiles\bundle
+cd %HOMEPATH%\vimfiles\bundle
+git clone https://github.com/azzoam/FixGVimBorder.git
 ```
 
-**The plugin can be loaded only in GVim section.**
+Other Vim package managers should work fine, but I have not tested
+all of them.
 
-**If you put it inside console vim then it may crasch the program.**
-
-**The plugin can be loaded only ONCE after GVim startup!**
-
-**NOTE** that the recommeded use sets an environment variable
-`$VIM_FULLSCREEN_DLL_FIX` to 1 when the dll loads, which prevents
-the dll from being reloaded if you reload your vimrc in the same session.
-
-Reloading the plugin a second time may cause memory leaks and glitches
-(not tested).
-
-If plugin doesn't work try loading it using ``echo`` instead of ``call``
-command to see if there are any detected errors:
+Once installed, all we need is to put these lines in our vimrc:
 
 ```vim
-    " GVim settings only
-    if has("gui_running")
-        " use echo instead of call to see returned message
-        autocmd GUIEnter * echo libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
-    endif
+execute pathogen#infect()
+
+if has('gui_running')
+    " ...
+    colorscheme SOME_COLOR_SCHEME
+    " ...
+endif
+
+call fixGVimBorder#auto()
 ```
+`fixGVimBorder#auto()` will do all the work to autodetect your background
+color, load the dll patches, and fill in GVim's borders with the background
+color.  It also autodetects whether to center the screen or not to 
+ensure compatibility with scrollbars and menus.
+
+Please **NOTE** that the only requirement for the placement of `call fixGVimBorder#auto()`
+is **after** `execute pathogen#infect()` and setting of the colorscheme.
+
+`fixGVimBorder#auto()` can be called either inside or outside of the
+`has('gui_running')` block, it does not matter. In console Vim the code does nothing.
+
+## Customization
+
+The vimrc above will autodetect your background color and fill the screen 
+border with it.  If you experience issues, or wish to specificy the color
+yourself, simply pass a hex color to fixGVimBorder like below.
+
+```vim
+call fixGVimBorder#auto("#FF0000")
+```
+or
+```vim
+call fixGVimBorder#withColor("#FF0000")
+```
+
+If plugin doesn't work try the following in your vimrc to see if there are
+any detected errors:
+
+```vim
+call fixGVimBorder#printErrors()
+```
+
+## Centering
+
+The patch can either center the VimText area or not.  Centering looks
+better on GVim with no menu or scrollbars present, but interferes with
+several elements -- see "Scrollbar and other GUI elements issues"
+
+The user-facing functions can either autodetect which should occur,
+or allow you to specify them yourself.
+
+**Autodetect centering:**
+* `fixGVimBorder#auto()`
+* `fixGVimBorder#withColor()`
+* `fixGVimBorder#printErrors()`
+
+**Force centering:**
+* `fixGVimBorder#center()`
+* `fixGVimBorder#withColorCenter()`
+* `fixGVimBorder#printErrorsCenter()`
+
+**Force no centering:**
+* `fixGVimBorder#noCenter()`
+* `fixGVimBorder#withColorNoCenter()`
+* `fixGVimBorder#printErrorsNoCenter()`
 
 # Known problems
 
@@ -103,7 +131,7 @@ Because the plugin tries to center the vim text area it may interfere with GUI.
 The well know problem is scroll bar.
 
 If you have any problems with GUI elements when using the plugin load it using
-`LoadFixGVimBorderWithoutAutocentering` function instead of `LoadFixGVimBorder`.
+the force no centering functions insead.
 
 # Thanks
 

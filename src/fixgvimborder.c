@@ -1,13 +1,16 @@
 #include <windows.h>
 #include "common.h"
 
+// NOTE(alex):  Autodetection of color is now handled via
+// vimscript exclusively.  All c code for this has been 
+// deleted to reflect this change.  Autodetection of color
+// is now stable.
 static WNDPROC _originalWndProc = NULL;
 static HINSTANCE _module = NULL;
 static HWND _mainWindow = NULL;
 static HWND _vimTextArea = NULL;
 static CHAR classNameBuffer[BUFFER_SIZE];
 
-static BOOL _autoDetectBaseColor = TRUE;
 static BOOL _hasEdgesProblem = FALSE;
 static COLORREF _baseColor = RGB(255, 0, 0);
 static BOOL _enableCentering = TRUE;
@@ -19,7 +22,6 @@ LRESULT CALLBACK SubclassWndProc(HWND hwnd, UINT wm, WPARAM wParam, LPARAM lPara
 // replaces GVim WinProc event loop
 LPTSTR _declspec(dllexport) InitFixBorderHook(
     HINSTANCE module,
-    BOOL autoDetectBaseColor,
     COLORREF baseColor,
     BOOL enableCentering)
 {
@@ -29,7 +31,6 @@ LPTSTR _declspec(dllexport) InitFixBorderHook(
     // we will use it to clear ourselves from memory
     // on GVim window close or on error
     _module = module;
-    _autoDetectBaseColor = autoDetectBaseColor;
     _baseColor = baseColor;
     _enableCentering = enableCentering;
 
@@ -121,12 +122,22 @@ LRESULT CALLBACK SubclassWndProc(
         RECT rc;
         GetClientRect(hwnd, &rc);
 
-        // fill whole client are to obtain background color
+        // fill whole client area to obtain background color
         HBRUSH hb = CreateSolidBrush(_baseColor);
         FillRect(hdc, &ps.rcPaint, hb);
 
         // end painting
         EndPaint(hwnd, &ps);
+    }
+
+    // NOTE(alex):
+    // Bug fix -- White border reappearing on minimize/maximize --
+    // Maximize is handled via the WM_SIZE message.  Handling the
+    // event explicitly ourselves and posting a WM_PAINT message via
+    // RedrawWindow before handing it off to the default window proc
+    // restores the desired behavior.
+    if (wm == WM_SIZE && wParam == SIZE_MAXIMIZED && hwnd == _mainWindow) {
+        RedrawWindow(hwnd, 0, 0, RDW_UPDATENOW | RDW_NOCHILDREN);
     }
 
     // call default GVim WinProc
@@ -135,6 +146,7 @@ LRESULT CALLBACK SubclassWndProc(
     // center Vim TextArea in the whole window
     if (wm == WM_SIZE)
     {
+
         RECT mainRc;
         GetClientRect(hwnd, &mainRc);
         int mainWidth = mainRc.right - mainRc.left;
@@ -162,13 +174,6 @@ LRESULT CALLBACK SubclassWndProc(
               TRUE);
         }
 
-        // try to autodetect base color using pixel from right bottom corne
-        if (_autoDetectBaseColor && _hasEdgesProblem)
-        {
-            HDC hdc = GetDC(_vimTextArea);
-            _baseColor = GetPixel(hdc, textRc.right - 10, textRc.bottom - 10);
-            ReleaseDC(_vimTextArea, hdc);
-        }
     }
 
     // return original result from original GVim WinProc
