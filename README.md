@@ -21,7 +21,6 @@ Solution:
 
 ## Configuration
 
-**I will start by saying that the solution is pretty hacky.**
 
 The plugin consists of two ``*.dll`` files.
 GVim removes plugin from memory just after using it, so we need two plugins:
@@ -32,7 +31,10 @@ GVim removes plugin from memory just after using it, so we need two plugins:
    itself from memory after Gvim closes
 
 **Repository provides you with precompiled dll libraries
-for 32b and 64b system (located in lib/x86 and lib/x64).**
+for 32bit and 64bit systems (located in lib/x86 and lib/x64).**
+
+These dll's live in the lib directory of the package itself.  No need to 
+copy them elsewhere!
 
 ## Installation
 
@@ -43,19 +45,31 @@ cd %HOMEPATH%\vimfiles\bundle
 git clone https://github.com/azzoam/FixGVimBorder.git
 ```
 
-Additionally, both dll libraries need to be placed in GVim installation directory.
-The default installation directory (for 64 bit system) is:
-``C:\Program Files\vim\vim80``
-
-You can run either `install32.bat` or `install64.bat` as admin,
-or copy them yourself.
+Other Vim package managers should work fine, but I have not tested
+all of them.
 
 Once installed, all we need is to put these lines in our vimrc:
 
 ```vim
 execute pathogen#infect()
+
+if has('gui_running')
+    " ...
+    colorscheme SOME_COLOR_SCHEME
+    " ...
+endif
+
 call fixGVimBorder#auto()
 ```
+`fixGVimBorder#auto()` will do all the work to autodetect your background
+color, load the dll patches, and fill in GVim's borders with the background
+color.  
+
+Please **NOTE** that the only requirement for the placement of `call fixGVimBorder#auto()`
+is **after** `execute pathogen#infect()` and setting of the colorscheme.
+
+`fixGVimBorder#auto()` can be called either inside or outside of the
+`has('gui_running')` block, it does not matter. In console Vim the code does nothing.
 
 ## Customization
 
@@ -71,19 +85,11 @@ or
 call fixGVimBorder#withColor("#FF0000")
 ```
 
-**NOTE** that calling the patch in this way prevents the dll from being reloaded
-if you reload your vimrc in the same session, and also ensures the patch is
-only loaded inside GVim and not console vim.  In console Vim the code does nothing.
-
-If plugin doesn't work try loading it using ``echo`` instead of ``call``
-command to see if there are any detected errors:
+If plugin doesn't work try the following in your vimrc to see if there are
+any detected errors:
 
 ```vim
-    " GVim settings only
-    if has("gui_running")
-        " use echo instead of call to see returned message
-        autocmd GUIEnter * echo libcall("loadfixgvimborder.dll", "LoadFixGVimBorder", 0)
-    endif
+call fixGVimBorder#printErrors()
 ```
 
 

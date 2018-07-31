@@ -2,8 +2,14 @@
 
 REM set vcvarsall to wherever vcvarsall.bat is located
 set vcvarsall="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat"
-set build32="YES"
-set build64="YES"
+
+IF "%1"=="32" (
+    set build32="YES"
+    set build64="NO"
+) ELSE (
+    set build32="NO"
+    set build64="YES"
+)
 
 REM create necessary folders
 if not exist ".\lib" mkdir ".\lib"
