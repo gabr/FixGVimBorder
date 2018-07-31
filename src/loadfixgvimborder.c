@@ -2,18 +2,31 @@
 #include <string.h>
 #include "common.h"
 
+<<<<<<< HEAD:src/loadfixgvimborder.c
 // NOTE(alex):  Autodetection of color is now handled via
 // vimscript exclusively.  All c code for this has been 
 // deleted to reflect this change.  Autodetection of color
 // is now stable.
-typedef LPTSTR (*MYINTPROCSTR)(HINSTANCE, COLORREF);
+typedef LPTSTR (*MYINTPROCSTR)(HINSTANCE, COLORREF, BOOL);
 static CHAR _resultBuffer[BUFFER_SIZE];
+
+LPTSTR load(char* color, BOOL enableCentering);
+
+LPTSTR _declspec(dllexport) LoadFixGVimBorder(char* color)
+{
+    return load(color, TRUE);
+}
+
+LPTSTR _declspec(dllexport) LoadFixGVimBorderWithoutAutocentering(char* color)
+{
+    return load(color, FALSE);
+}
 
 // Loads main library.
 // Does not free loaded library from memory
 // (unless some error occurred) and this is intentional.
 // The library will free itself when GVim window will close.
-LPTSTR _declspec(dllexport) LoadFixGVimBorder(char* color)
+LPTSTR load(char* color, BOOL enableCentering)
 {
     // parse color
     COLORREF baseColor = RGB(0, 0, 0);
@@ -128,7 +141,8 @@ LPTSTR _declspec(dllexport) LoadFixGVimBorder(char* color)
     // call initialize function
     LPTSTR initResult = ((MYINTPROCSTR)initFunction)(
         module,
-        baseColor);
+        baseColor,
+        enableCentering);
 
     sprintf_s(
         _resultBuffer,

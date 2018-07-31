@@ -54,4 +54,3 @@ IF %build64%=="YES" (
 
 del .\lib\*obj
 
-
